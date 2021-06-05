@@ -10,20 +10,22 @@ public class Labirinto
         System.out.println("Regole del gioco:\n1) Utilizza i tasti WASD per muoverti.\n2) Raggiungi l'uscita E");
         System.out.println("\n\nGioca !!!");
 
-        int dim=generaInteroRandom(5);
+        int dim=generaInteroRandom(15);
         char[][] matrice=new char[dim][dim]; // initialize campo da gioco
 
 
-        int[] exit; // initialize EXIT
-        int[] player; // initialize PLAYER
-        int [][][] padri=new int [dim][dim][2]; // matrice dei padri che tiene traccia del predecessore di ogni posizione
-        Stack<int[]> path = new Stack<>(); // lista contenente il cammino;
+        int[] exit; // definisco EXIT
+        int[] player; // definisco PLAYER
+        int [][][] padri; // definisco matrice dei padri che tiene traccia del predecessore di ogni posizione
+        Stack<int[]> path ; // definisco lista contenente il cammino;
 
         do {
             generaMatrice(matrice,dim); // riempie la matrice generando la base di gioco
+            padri=new int [dim][dim][2]; // inizializzo padri
+            inizializzaPadri(padri,dim); // riempie la matrice padri con array di valore [-1,-1] per tenere traccia di posizioni già visitate
+            path = new Stack<>(); // inizializzo path
             exit = ridefinisciCasella(matrice, 'E', dim); // posizione exit salvata come [riga,colonna]
             player = ridefinisciCasella(matrice, 'P', dim); // posizione giocatore salvata come [riga,colonna]
-            stampaMatrice(matrice,dim);
         }while(!findPath(matrice,padri,path,dim,player,exit));
 
         System.out.println();
@@ -84,6 +86,19 @@ public class Labirinto
 
         }while(true);
 
+    }
+
+    public static void inizializzaPadri(int [][][] padri,int dim)
+    {
+         for(int row=0;row<dim;row++)
+        {
+            for(int collumn=0;collumn<dim;collumn++)
+            {
+                padri[row][collumn][0]=-1;
+                padri[row][collumn][1]=-1;
+            }
+
+        }
     }
 
     public static void pausaAutoPlay()
@@ -261,7 +276,7 @@ public class Labirinto
             int[] posizione=coda.remove();
             if(Arrays.equals(posizione, E))
             {
-
+                /*
                 for(int row=0;row<dim;row++)
                 {
                     for(int collumn=0;collumn<dim;collumn++)
@@ -270,14 +285,14 @@ public class Labirinto
                     }
                     System.out.print("|");
                     System.out.println();
-                }
+                }*/
                 System.out.println();
                 System.out.println();
 
                 while(!Arrays.equals(posizione, P)){
                     cammino.push(posizione);
-                    System.out.println("Giocatore: "+P[0]+" - "+P[1]);
-                    System.out.println("Padre: "+padri[posizione[0]][posizione[1]][0]+" - "+padri[posizione[0]][posizione[1]][1]);
+                    //System.out.println("Giocatore: "+P[0]+" - "+P[1]);
+                    //System.out.println("Padre: "+padri[posizione[0]][posizione[1]][0]+" - "+padri[posizione[0]][posizione[1]][1]);
                     posizione=new int[]{padri[posizione[0]][posizione[1]][0],padri[posizione[0]][posizione[1]][1]};
                     //System.out.println("Post: "+posizione[0]+" - "+posizione[1]);
                 }
@@ -364,7 +379,7 @@ public class Labirinto
         if(matrix[P[0]-1][P[1]]!='W')
         {
             coda.add(new int[]{P[0]-1, P[1]});
-            if(Arrays.equals(padri[P[0] - 1][P[1]], new int[]{0, 0}))
+            if(Arrays.equals(padri[P[0] - 1][P[1]], new int[]{-1, -1}))
             {
                 padri[P[0]-1][P[1]]=new int[]{P[0],P[1]};
             }
@@ -377,7 +392,7 @@ public class Labirinto
         if(matrix[P[0]][P[1]-1]!='W')
         {
             coda.add(new int[]{P[0], P[1] - 1});
-            if(Arrays.equals(padri[P[0]][P[1]-1], new int[]{0, 0}))
+            if(Arrays.equals(padri[P[0]][P[1]-1], new int[]{-1, -1}))
             {
                 padri[P[0]][P[1] - 1] =new int[]{P[0],P[1]};
             }
@@ -389,7 +404,7 @@ public class Labirinto
         if(matrix[P[0]+1][P[1]]!='W')
         {
             coda.add(new int[]{P[0] + 1, P[1]});
-            if(Arrays.equals(padri[P[0]+1][P[1]], new int[]{0, 0}))
+            if(Arrays.equals(padri[P[0]+1][P[1]], new int[]{-1, -1}))
             {
                 padri[P[0] + 1][P[1]] =new int[]{P[0],P[1]};
             }
@@ -401,7 +416,7 @@ public class Labirinto
         if(matrix[P[0]][P[1]+1]!='W')
         {
             coda.add(new int[]{P[0], P[1] + 1});
-            if(Arrays.equals(padri[P[0]][P[1]+1], new int[]{0, 0}))
+            if(Arrays.equals(padri[P[0]][P[1]+1], new int[]{-1, -1}))
             {
                 padri[P[0]][P[1]+1]=new int[]{P[0],P[1]};
             }
